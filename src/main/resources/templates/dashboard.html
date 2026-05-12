@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная - LISSKA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #F4F7F6; /* Мягкий серый фон как на референсе */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+        /* Стилизация верхнего меню */
+        .navbar {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1rem 2rem;
+        }
+        .nav-link {
+            color: #6c757d;
+            font-weight: 500;
+            margin-right: 1.5rem;
+        }
+        .nav-link.active {
+            color: #000;
+            border-bottom: 2px solid #FFD700; /* Желтый акцент из логина */
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background-color: #FFD700;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Карточки */
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            margin-top: 2rem;
+        }
+        .custom-card {
+            background: white;
+            border-radius: 16px;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: transform 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .custom-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            color: inherit;
+        }
+
+        /* Бейджи для расписания */
+        .badge-count {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .deadline-text {
+            color: #dc3545;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg">
+    <div class="container-fluid">
+        <a class="navbar-brand fw-bold" href="#">LISSKA</a>
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link active" href="#">Главная</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Расписание</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Задания</a></li>
+            </ul>
+            <div class="d-flex align-items-center">
+                <span class="me-3 fw-medium">Анна Аналитик</span>
+                <div class="user-avatar">АА</div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4" style="max-width: 900px;">
+
+    <h2 class="section-title">Расписание</h2>
+
+    <a href="#" class="custom-card d-flex justify-content-between align-items-center">
+        <div>
+            <h4 class="mb-1 fw-bold">День 1. Адаптация в компании</h4>
+            <div class="text-muted small">Пройди курс, запроси доступы, получи оборудование...</div>
+        </div>
+        <div class="text-end">
+            <div class="badge-count mb-1">5 заданий</div>
+            <div class="deadline-text">Сегодня до конца дня</div>
+        </div>
+    </a>
+
+    <h2 class="section-title">Задания в фокусе</h2>
+
+    <div class="row">
+        <div class="col-md-4">
+            <a href="#" class="custom-card h-100">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge bg-warning text-dark">В процессе</span>
+                </div>
+                <h5 class="fw-bold fs-6">Изучить политику ИБ</h5>
+                <p class="text-muted small mb-0 mt-3">Срок: Завтра, 12:00</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="#" class="custom-card h-100">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge bg-light text-dark border">Новое</span>
+                </div>
+                <h5 class="fw-bold fs-6">Настроить рабочий ноутбук</h5>
+                <p class="text-muted small mb-0 mt-3">Срок: 25 мая</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a href="#" class="custom-card h-100">
+                <div class="d-flex justify-content-between mb-3">
+                    <span class="badge bg-light text-dark border">Новое</span>
+                </div>
+                <h5 class="fw-bold fs-6">Встреча с наставником</h5>
+                <p class="text-muted small mb-0 mt-3">Срок: 26 мая</p>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>
