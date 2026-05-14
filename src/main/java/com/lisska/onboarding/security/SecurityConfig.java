@@ -44,8 +44,6 @@ public class SecurityConfig {
                         .requestMatchers("/h2-console/**").permitAll()
                         // Разрешаем логин и регистрацию
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Доступ к страницам фронта
-                        .requestMatchers("/login", "/dashboard", "/support", "/css/**", "/js/**").permitAll()
                         // ВСЕ остальное требует авторизации (токен)
                         .anyRequest().authenticated()
                 )
