@@ -1,26 +1,36 @@
 package com.lisska.onboarding.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "groups")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Table(name = "groups") // 'group' - зарезервированное слово в SQL
+@Data
 public class Group {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
-    // Ментор группы. Используем ленивую загрузку для оптимизации памяти
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "mentor_id")
-    private User mentor;
+    @Column(name = "mentor_id")
+    private Long mentorId; // ID наставника, который ведет этот поток
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt; // Дата создания потока
+
+    @Column(name = "status")
+    private String status; // Статус группы: ACTIVE или COMPLETED
+
+    // Перед первым сохранением в базу автоматически проставляем дату и статус
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        if (this.status == null) {
+            this.status = "ACTIVE"; // По умолчанию группа активна
+        }
+    }
 }

@@ -1,9 +1,10 @@
-package com.lisska.onboarding.security;
+package com.lisska.onboarding.security; // Или .security, смотря как у тебя сейчас папка называется
 
 import com.lisska.onboarding.security.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -33,17 +34,26 @@ public class SecurityConfig {
                 // 1. Отключаем CSRF, так как мы используем JWT (Stateless)
                 .csrf(AbstractHttpConfigurer::disable)
 
-                // 2. Настройка доступа к H2-консоли (она работает через фреймы)
+                // Включаем CORS (для связки фронта и бэка)
+                .cors(Customizer.withDefaults())
+
+                // 2. Настройка доступа к H2-консоли (через фреймы)
                 .headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable))
 
                 // 3. Правила доступа к эндпоинтам
                 .authorizeHttpRequests(auth -> auth
                         // Разрешаем Swagger
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+
                         // Разрешаем H2-консоль
                         .requestMatchers("/h2-console/**").permitAll()
-                        // Разрешаем логин и регистрацию
+
+                        // Разрешаем логин и регистрацию (API)
                         .requestMatchers("/api/auth/**").permitAll()
+
+                        // Добавляем HTML страницы фронтенда
+                        .requestMatchers("/login", "/dashboard", "/error", "/css/**", "/js/**").permitAll()
+
                         // ВСЕ остальное требует авторизации (токен)
                         .anyRequest().authenticated()
                 )
@@ -51,18 +61,19 @@ public class SecurityConfig {
                 // 4. Сессии не нужны, мы работаем по JWT
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
-                // 5. Добавляем наш JWT фильтр перед стандартным фильтром проверки логина/пароля
+                // 5. Добавляем наш JWT фильтр перед стандартным фильтром
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+    // Бин для шифрования паролей
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // Стандарт для Java-приложений — BCrypt
         return new BCryptPasswordEncoder();
     }
 
+    // Бин менеджера аутентификации
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();

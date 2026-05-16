@@ -3,6 +3,9 @@ package com.lisska.onboarding.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tasks")
 @Getter
@@ -19,13 +22,21 @@ public class Task {
     @Column(nullable = false)
     private String title;
 
-    // TEXT используется для длинных строк, чтобы не упираться в лимит 255 символов
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @Column(columnDefinition = "TEXT")
-    private String checklistJson; // Храним чек-лист в формате JSON
+    private String tags; // Храним теги строкой: "HR, Безопасность"
 
-    @Column(columnDefinition = "TEXT")
-    private String externalLinks; // Ссылки на файлы
+    // Spring сам создаст таблицу task_links
+    @ElementCollection
+    @CollectionTable(name = "task_links", joinColumns = @JoinColumn(name = "task_id"))
+    @Column(name = "link")
+    @Builder.Default
+    private List<String> links = new ArrayList<>();
+
+    // Spring сам создаст таблицу task_checklists
+    @ElementCollection
+    @CollectionTable(name = "task_checklists", joinColumns = @JoinColumn(name = "task_id"))
+    @Builder.Default
+    private List<ChecklistItem> checklist = new ArrayList<>();
 }

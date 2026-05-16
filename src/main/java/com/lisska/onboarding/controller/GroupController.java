@@ -1,10 +1,11 @@
 package com.lisska.onboarding.controller;
 
-import com.lisska.onboarding.dto.GroupDto;
-import com.lisska.onboarding.service.GroupService;
+import com.lisska.onboarding.model.Group;
+import com.lisska.onboarding.model.User;
+import com.lisska.onboarding.repository.GroupRepository;
+import com.lisska.onboarding.repository.UserRepository;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,15 +15,25 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/groups")
-@RequiredArgsConstructor
-@Tag(name = "Группы", description = "Управление учебными группами")
+@Tag(name = "Группы", description = "Управление группами (потоками)")
 public class GroupController {
-    private final GroupService groupService;
 
-    @GetMapping
-    @Operation(summary = "Получить все группы")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MENTOR', 'USER')")
-    public List<GroupDto> getAllGroups() {
-        return groupService.getAllGroups();
+    private final GroupRepository groupRepository;
+    private final UserRepository userRepository;
+
+    public GroupController(GroupRepository groupRepository, UserRepository userRepository) {
+        this.groupRepository = groupRepository;
+        this.userRepository = userRepository;
+    }
+
+    @GetMapping("/my")
+    @Operation(summary = "Получить активные группы текущего ментора")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MENTOR')")
+    public List<Group> getMyGroups(org.springframework.security.core.Authentication authentication) {
+        User currentUser = userRepository.findByUsername(authentication.getName())
+                .orElseThrow(() -> new RuntimeException("Пользователь не найден"));
+
+        // Возвращаем все активные (ACTIVE) группы, где текущий человек - наставник
+        return groupRepository.findAllByMentorIdAndStatus(currentUser.getId(), "ACTIVE");
     }
 }

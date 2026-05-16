@@ -6,74 +6,25 @@
     <title>Главная - LISSKA</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-        /* Стилизация верхнего меню */
-        .navbar {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            padding: 1rem 2rem;
-        }
-        .nav-link {
-            color: #6c757d;
-            font-weight: 500;
-            margin-right: 1.5rem;
-        }
-        .nav-link.active {
-            color: #000;
-        }
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            background-color: #FFD700;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
+        body { background-color: #F4F7F6; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .navbar { background-color: white; box-shadow: 0 2px 10px rgba(0,0,0,0.05); padding: 1rem 2rem; }
+        .nav-link { color: #6c757d; font-weight: 500; margin-right: 1.5rem; }
+        .nav-link.active { color: #000; border-bottom: 2px solid #FFD700; }
+        .user-avatar { width: 40px; height: 40px; background-color: #FFD700; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; cursor: pointer; }
+        .section-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem; margin-top: 2rem; }
+        .custom-card { background: white; border-radius: 16px; border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.03); padding: 1.5rem; margin-bottom: 1rem; transition: transform 0.2s; text-decoration: none; color: inherit; display: block; }
+        .custom-card:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.08); color: inherit; }
 
-        /* Карточки */
-        .section-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            margin-top: 2rem;
-        }
-        .custom-card {
-            background: white;
-            border-radius: 16px;
-            border: none;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            transition: transform 0.2s;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        .custom-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            color: inherit;
-        }
+        .search-results { position: absolute; z-index: 1050; width: 100%; max-height: 200px; overflow-y: auto; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-radius: 0 0 8px 8px; }
+        .search-result-item { cursor: pointer; }
+        .search-result-item:hover { background-color: #f8f9fa; }
 
-        /* Бейджи для расписания */
-        .badge-count {
-            background-color: #f8f9fa;
-            color: #6c757d;
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        .deadline-text {
-            color: #dc3545;
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
+        .tag-badge { background-color: #e9ecef; color: #495057; border-radius: 15px; padding: 5px 10px; font-size: 0.8rem; margin-right: 5px; display: inline-block; }
+        .form-label { font-weight: 700; color: #495057; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* Стили для кнопок-крестиков в динамических полях */
+        .btn-remove-field { color: #dc3545; border-color: #dc3545; background: transparent; }
+        .btn-remove-field:hover { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
@@ -88,33 +39,334 @@
                 <li class="nav-item"><a class="nav-link" href="#">Задания</a></li>
             </ul>
             <div class="d-flex align-items-center">
+                <span class="me-3 fw-medium" id="userNameDisplay">Сотрудник</span>
+                <div class="dropdown">
+                    <div class="user-avatar" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span id="userInitials">US</span>
+                    </div>
+                    <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2">
+                        <li><a class="dropdown-item text-danger fw-bold" href="#" id="logoutButton">🚪 Выйти из системы</a></li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 </nav>
 
 <div class="container mt-4" style="max-width: 900px;">
-
-
-    <a href="#" class="custom-card d-flex justify-content-between align-items-center">
-        <div>
-            <h4 class="mb-1 fw-bold">День 1. Адаптация в компании</h4>
-            <div class="text-muted small">Пройди курс, запроси доступы, получи оборудование...</div>
-        </div>
-        <div class="text-end">
-            <div class="deadline-text">Сегодня до конца дня</div>
-        </div>
-    </a>
+    <div class="d-flex justify-content-between align-items-center mt-4 mb-3">
+        <h2 class="section-title mb-0" style="margin-top: 0;">Расписание</h2>
+        <button class="btn btn-warning fw-bold rounded-pill px-4 shadow-sm" id="btnOpenConstructor">
+            + Создать задание
+        </button>
+    </div>
 
     <h2 class="section-title">Задания в фокусе</h2>
-
+    <div class="row" id="tasksContainer">
     </div>
 </div>
+
+<div class="modal fade" id="taskConstructorModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header border-0 pb-0 pt-4 px-4">
+                <h4 class="modal-title fw-bold">Конструктор задания</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="taskConstructorForm">
+
+                    <div class="mb-4 p-3 rounded" style="background-color: #f8f9fa; border: 1px solid #e9ecef;">
+                        <label class="form-label text-dark mb-2">1. Назначение (Кому)</label>
+                        <select class="form-select mb-3" id="taskTargetType">
+                            <option value="PERSONAL">👤 Для себя (Личное)</option>
+                            <option value="USER" id="optUser">🎯 Конкретному сотруднику</option>
+                            <option value="GROUP" id="optGroup">👥 Учебной группе</option>
+                        </select>
+
+                        <div id="targetUserBlock" style="display: none;" class="position-relative mt-2">
+                            <input type="text" class="form-control" id="userSearchInput" placeholder="Введите имя сотрудника..." autocomplete="off">
+                            <ul class="list-group search-results" id="userSearchResults"></ul>
+                            <input type="hidden" id="selectedUserId">
+                            <div id="selectedUserBadge" class="mt-2 text-success fw-bold" style="display: none;">✓ Выбран: <span></span></div>
+                        </div>
+
+                        <div id="targetGroupBlock" style="display: none;" class="mt-2">
+                            <select class="form-select" id="groupSelect">
+                                <option value="">Загрузка групп...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Название задания *</label>
+                            <input type="text" class="form-control" id="taskTitle" placeholder="Например: Изучить регламент ИБ" required>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Дедлайн *</label>
+                            <input type="datetime-local" class="form-control" id="taskDeadline" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">Описание</label>
+                        <textarea class="form-control" id="taskDescription" rows="3" placeholder="Подробное описание задачи (поддерживается базовая разметка)"></textarea>
+                    </div>
+
+                    <div class="mb-4 p-3 rounded" style="background-color: #fffaf0; border: 1px dashed #ffeeba;">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <label class="form-label mb-0">Чек-лист выполнения</label>
+                            <button type="button" class="btn btn-sm btn-outline-warning text-dark fw-bold" id="btnAddChecklist">
+                                + Добавить пункт
+                            </button>
+                        </div>
+                        <div id="checklistContainer">
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                <label class="form-label mb-0">Материалы (Ссылки)</label>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" id="btnAddLink">
+                                    + Добавить
+                                </button>
+                            </div>
+                            <div id="linksContainer">
+                                <div class="d-flex mb-2 link-item">
+                                    <input type="url" class="form-control form-control-sm me-2 link-input" placeholder="https://...">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label mb-2">Теги (через запятую)</label>
+                            <input type="text" class="form-control form-control-sm mb-2" id="taskTags" placeholder="HR, Безопасность...">
+                            <div>
+                                <span class="tag-badge">#onboarding</span>
+                                <span class="tag-badge">#study</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-warning w-100 py-3 fw-bold fs-5 rounded-pill shadow-sm text-dark" id="btnSubmitTask">
+                        Создать задание
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    const token = localStorage.getItem('jwt_token');
+    if (!token) window.location.href = '/login';
+
+    let constructorModal;
+    let currentUserRole = 'USER';
+
+    document.addEventListener('DOMContentLoaded', async function() {
+        constructorModal = new bootstrap.Modal(document.getElementById('taskConstructorModal'));
+
+        document.getElementById('logoutButton').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('jwt_token');
+            window.location.href = '/login';
+        });
+
+        // 1. ЗАГРУЗКА ДАННЫХ ПРОФИЛЯ
+        try {
+            const meResponse = await fetch('/api/users/me', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (meResponse.ok) {
+                const userData = await meResponse.json();
+                currentUserRole = userData.role;
+                document.getElementById('userNameDisplay').textContent = userData.fullName;
+
+                const nameParts = userData.fullName.trim().split(' ');
+                let initials = 'US';
+                if (nameParts.length >= 2) initials = (nameParts[0][0] + nameParts[1][0]).toUpperCase();
+                else if (nameParts.length === 1 && nameParts[0].length > 0) initials = nameParts[0].substring(0, 2).toUpperCase();
+                document.getElementById('userInitials').textContent = initials;
+
+                if (currentUserRole === 'USER') {
+                    document.getElementById('optUser').style.display = 'none';
+                    document.getElementById('optGroup').style.display = 'none';
+                }
+            }
+
+            // Загрузка задач
+            const response = await fetch('/api/assignments/my', { headers: { 'Authorization': 'Bearer ' + token } });
+            if (response.ok) {
+                const assignments = await response.json();
+                const container = document.getElementById('tasksContainer');
+                container.innerHTML = '';
+                if (assignments.length === 0) {
+                    container.innerHTML = '<div class="col-12"><p class="text-muted">У вас пока нет активных заданий.</p></div>';
+                } else {
+                    assignments.forEach(a => {
+                        const deadline = a.deadline ? new Date(a.deadline).toLocaleString("ru", {month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit'}) : 'Не указан';
+                        // Заглушка, если бэкенд не вернул title
+                        const title = a.task ? a.task.title : "Задание #" + a.id;
+
+                        container.insertAdjacentHTML('beforeend', `
+                            <div class="col-md-4 mb-3">
                                 <a href="#" class="custom-card h-100">
-                                    <div class="d-flex justify-content-between mb-3">
-                                    </div>
+                                    <span class="badge bg-warning text-dark border mb-3">${a.status || 'В процессе'}</span>
+                                    <h5 class="fw-bold fs-6">${title}</h5>
+                                    <p class="text-muted small mb-0 mt-3">Дедлайн: ${deadline}</p>
                                 </a>
                             </div>
+                        `);
+                    });
+                }
+            }
+        } catch (error) { console.error(error); }
 
+        // ================= ЛОГИКА КОНСТРУКТОРА =================
+
+        document.getElementById('btnOpenConstructor').addEventListener('click', () => constructorModal.show());
+
+        const targetSelect = document.getElementById('taskTargetType');
+        const blockUser = document.getElementById('targetUserBlock');
+        const blockGroup = document.getElementById('targetGroupBlock');
+
+        targetSelect.addEventListener('change', async function() {
+            blockUser.style.display = 'none';
+            blockGroup.style.display = 'none';
+
+            if (this.value === 'USER') {
+                blockUser.style.display = 'block';
+            } else if (this.value === 'GROUP') {
+                blockGroup.style.display = 'block';
+                const res = await fetch('/api/groups/my', { headers: { 'Authorization': 'Bearer ' + token } });
+                if (res.ok) {
+                    const groups = await res.json();
+                    const gSelect = document.getElementById('groupSelect');
+                    if (groups.length === 0) {
+                        gSelect.innerHTML = '<option value="">Нет активных групп (Создайте группу)</option>';
+                        gSelect.disabled = true;
+                    } else {
+                        gSelect.disabled = false;
+                        gSelect.innerHTML = groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+                    }
+                }
+            }
+        });
+
+        const searchInput = document.getElementById('userSearchInput');
+        const searchResults = document.getElementById('userSearchResults');
+        const badge = document.getElementById('selectedUserBadge');
+
+        searchInput.addEventListener('input', async function() {
+            const query = this.value.trim();
+            document.getElementById('selectedUserId').value = '';
+            badge.style.display = 'none';
+
+            if (query.length < 2) { searchResults.style.display = 'none'; return; }
+
+            const res = await fetch(`/api/users/search?query=${encodeURIComponent(query)}`, { headers: { 'Authorization': 'Bearer ' + token } });
+            if (res.ok) {
+                const users = await res.json();
+                searchResults.innerHTML = '';
+                if (users.length === 0) {
+                    searchResults.innerHTML = '<li class="list-group-item text-muted">Не найдено</li>';
+                } else {
+                    users.forEach(u => {
+                        const li = document.createElement('li');
+                        li.className = 'list-group-item search-result-item d-flex justify-content-between align-items-center';
+                        const roleHtml = currentUserRole === 'ADMIN' ? ` • Роль: ${u.role}` : '';
+                        li.innerHTML = `<div><div class="fw-bold">${u.fullName}</div><div class="small text-muted">${u.username}${roleHtml}</div></div>`;
+
+                        li.onclick = () => {
+                            searchInput.value = u.fullName;
+                            document.getElementById('selectedUserId').value = u.id;
+                            badge.querySelector('span').textContent = u.fullName;
+                            badge.style.display = 'block';
+                            searchResults.style.display = 'none';
+                        };
+                        searchResults.appendChild(li);
+                    });
+                }
+                searchResults.style.display = 'block';
+            }
+        });
+
+        // ================= ДИНАМИЧЕСКИЕ ПОЛЯ =================
+        document.getElementById('btnAddChecklist').addEventListener('click', () => {
+            const container = document.getElementById('checklistContainer');
+            const div = document.createElement('div');
+            div.className = 'd-flex mb-2 align-items-center checklist-item';
+            div.innerHTML = `
+                <input class="form-check-input me-2 mt-0" type="checkbox" disabled title="Галочки ставятся при выполнении">
+                <input type="text" class="form-control form-control-sm me-2 checklist-input" placeholder="Шаг выполнения...">
+                <button type="button" class="btn btn-sm btn-remove-field fw-bold">✖</button>
+            `;
+            container.appendChild(div);
+            div.querySelector('.btn-remove-field').addEventListener('click', () => div.remove());
+        });
+
+        document.getElementById('btnAddLink').addEventListener('click', () => {
+            const container = document.getElementById('linksContainer');
+            const div = document.createElement('div');
+            div.className = 'd-flex mb-2 link-item';
+            div.innerHTML = `
+                <input type="url" class="form-control form-control-sm me-2 link-input" placeholder="https://...">
+                <button type="button" class="btn btn-sm btn-remove-field fw-bold">✖</button>
+            `;
+            container.appendChild(div);
+            div.querySelector('.btn-remove-field').addEventListener('click', () => div.remove());
+        });
+
+        // ================= ОТПРАВКА ДАННЫХ =================
+        document.getElementById('taskConstructorForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const linksArray = Array.from(document.querySelectorAll('.link-input'))
+                .map(input => input.value.trim())
+                .filter(val => val !== '');
+
+            const checklistArray = Array.from(document.querySelectorAll('.checklist-input'))
+                .map(input => input.value.trim())
+                .filter(val => val !== '')
+                .map(text => ({ text: text, isCompleted: false }));
+
+            const payload = {
+                targetType: document.getElementById('taskTargetType').value,
+                targetUserId: document.getElementById('selectedUserId').value,
+                targetGroupId: document.getElementById('groupSelect').value,
+                title: document.getElementById('taskTitle').value,
+                description: document.getElementById('taskDescription').value,
+                deadline: document.getElementById('taskDeadline').value,
+                tags: document.getElementById('taskTags').value,
+                links: linksArray,
+                checklist: checklistArray
+            };
+
+            try {
+                // РЕАЛЬНЫЙ POST-ЗАПРОС НА БЭКЕНД
+                const response = await fetch('/api/tasks', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (response.ok) {
+                    constructorModal.hide();
+                    window.location.reload(); // Перезагружаем страницу, чтобы увидеть новую карточку
+                } else {
+                    alert("Ошибка при сохранении задания на сервере.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Ошибка сети при отправке задания.");
+            }
+        });
+    });
+</script>
 </body>
 </html>
